@@ -1,12 +1,13 @@
-﻿using LiveSplit.Model;
-using LiveSplit.Model.Comparisons;
-using LiveSplit.TimeFormatters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
+
+using LiveSplit.Model;
+using LiveSplit.Model.Comparisons;
+using LiveSplit.TimeFormatters;
 
 namespace LiveSplit.UI.Components
 {
@@ -34,7 +35,7 @@ namespace LiveSplit.UI.Components
             state.ComparisonRenamed += state_ComparisonRenamed;
         }
 
-        void state_ComparisonRenamed(object sender, EventArgs e)
+        private void state_ComparisonRenamed(object sender, EventArgs e)
         {
             var args = (RenameEventArgs)e;
             if (Settings.Comparison == args.OldName)
@@ -48,7 +49,7 @@ namespace LiveSplit.UI.Components
         {
             InternalComponent.DisplayTwoRows = Settings.Display2Rows;
 
-            InternalComponent.NameLabel.HasShadow 
+            InternalComponent.NameLabel.HasShadow
                 = InternalComponent.ValueLabel.HasShadow
                 = state.LayoutSettings.DropShadows;
 
@@ -62,8 +63,8 @@ namespace LiveSplit.UI.Components
         private void DrawBackground(Graphics g, LiveSplitState state, float width, float height)
         {
             if (Settings.BackgroundColor.A > 0
-                || Settings.BackgroundGradient != GradientType.Plain
-                && Settings.BackgroundColor2.A > 0)
+                || (Settings.BackgroundGradient != GradientType.Plain
+                && Settings.BackgroundColor2.A > 0))
             {
                 var gradientBrush = new LinearGradientBrush(
                             new PointF(0, 0),
@@ -101,9 +102,9 @@ namespace LiveSplit.UI.Components
         public float MinimumHeight => InternalComponent.MinimumHeight;
 
         public string ComponentName
-        => (Settings.TotalTimeSave ? "Total " : "") + "Possible Time Save" 
-            + (Settings.Comparison == "Current Comparison" 
-                ? "" 
+        => (Settings.TotalTimeSave ? "Total " : "") + "Possible Time Save"
+            + (Settings.Comparison == "Current Comparison"
+                ? ""
                 : " (" + CompositeComparisons.GetShortComparisonName(Settings.Comparison) + ")");
 
         public Control GetSettingsControl(LayoutMode mode)
@@ -149,11 +150,15 @@ namespace LiveSplit.UI.Components
             {
                 var segmentDelta = TimeSpan.Zero - LiveSplitStateHelper.GetLiveSegmentDelta(state, state.Run.IndexOf(segment), comparison, state.CurrentTimingMethod);
                 if (segmentDelta < time)
+                {
                     time = segmentDelta;
+                }
             }
 
             if (time < TimeSpan.Zero)
+            {
                 time = TimeSpan.Zero;
+            }
 
             return time;
         }
@@ -162,19 +167,26 @@ namespace LiveSplit.UI.Components
         {
             var comparison = Settings.Comparison == "Current Comparison" ? state.CurrentComparison : Settings.Comparison;
             if (!state.Run.Comparisons.Contains(comparison))
+            {
                 comparison = state.CurrentComparison;
+            }
+
             var comparisonName = CompositeComparisons.GetShortComparisonName(comparison);
             var componentName = (Settings.TotalTimeSave ? "Total " : "") + "Possible Time Save" + (Settings.Comparison == "Current Comparison" ? "" : " (" + comparisonName + ")");
-            
+
             if (InternalComponent.InformationName != componentName)
             {
                 InternalComponent.AlternateNameText.Clear();
                 if (componentName.Contains("Total"))
+                {
                     InternalComponent.AlternateNameText.Add("Total Possible Time Save");
+                }
+
                 InternalComponent.AlternateNameText.Add("Possible Time Save");
                 InternalComponent.AlternateNameText.Add("Poss. Time Save");
                 InternalComponent.AlternateNameText.Add("Time Save");
             }
+
             InternalComponent.LongestString = componentName;
             InternalComponent.InformationName = componentName;
 
@@ -184,7 +196,7 @@ namespace LiveSplit.UI.Components
                 {
                     InternalComponent.TimeValue = TimeSpan.Zero;
                 }
-                else                
+                else
                 {
                     var totalPossibleTimeSave = state.Run
                         .Skip(state.CurrentSplitIndex)
@@ -214,6 +226,9 @@ namespace LiveSplit.UI.Components
         {
         }
 
-        public int GetSettingsHashCode() => Settings.GetSettingsHashCode();
+        public int GetSettingsHashCode()
+        {
+            return Settings.GetSettingsHashCode();
+        }
     }
 }
